@@ -27,26 +27,43 @@ def MainPage(request):
     return render(request, 'main.html')
 def UserRegister(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        User.objects.create_user(username=username, password=password)
-        return redirect('login')
-    return render(request, 'register.html')
+        username = request.POST.get('username').strip()
+        password = request.POST.get('password').strip()
 
+        # Validation checks
+        if not username or not password:
+            messages.error(request, "All fields are required.")
+            return render(request, 'register.html')
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken. Please choose another.")
+            return render(request, 'register.html')
+
+        if len(password) < 6:
+            messages.error(request, "Password must be at least 6 characters long.")
+            return render(request, 'register.html')
+
+        # Create user if everything is valid
+        User.objects.create_user(username=username, password=password)
+        messages.success(request, "Account created successfully. You can now log in.")
+        return redirect('login')
+
+    return render(request, 'register.html')
 def UserLogin(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username').strip()
+        password = request.POST.get('password').strip()
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
             login(request, user)
             if user.is_superuser or user.is_staff:
                 return redirect('create_poll')
             return redirect('poll_list')
         else:
+            messages.error(request, "Invalid username or password.")
             return render(request, 'login.html', {'error': 'Invalid credentials'})
     return render(request, 'login.html')
-
 
 def UserLogout(request):
     logout(request)
