@@ -13,6 +13,8 @@ from .models import PollModel, PollOption, UserVote
 
 import openpyxl
 from django.http import HttpResponse
+
+from django.utils import timezone
 # Create your views here.
 
 
@@ -63,20 +65,22 @@ def is_admin(user):
 def create_poll(request):
     if request.method == "POST":
         question = request.POST.get("question")
-        options = request.POST.getlist("options")  # multiple options
+        options = request.POST.getlist("options")  
+        end_time = request.POST.get("end_time")
 
         if question and options:
             poll = PollModel.objects.create(
                 user=request.user,
                 question=question,
-                pub_date=timezone.now()
+                pub_date=timezone.now(),
+                end_time=parse_datetime(end_time) if end_time else None
             )
             for opt in options:
                 if opt.strip():
                     PollOption.objects.create(poll=poll, option_text=opt)
             return redirect("poll_list")
 
-    return render(request, "create_poll.html")
+    return render(request, "create_poll.html",{"now": timezone.now()})
 
 
 
@@ -211,15 +215,12 @@ def export_poll_excel(request, poll_id):
 
 
 
-from django.db.models import F
 
 @login_required
 @user_passes_test(is_admin)
 def delete_poll_votes(request, poll_id):
     poll = get_object_or_404(PollModel, id=poll_id)
+    poll.delete()  # deletes poll + all related options + votes (cascade)
 
-    UserVote.objects.filter(poll=poll).delete()
-    PollOption.objects.filter(poll=poll).update(votes=0)
-
-    messages.success(request, f"All votes for '{poll.question}' have been deleted.")
-    return redirect("admin_poll_list")  
+    messages.success(request, f"Poll '{poll.question}' has been deleted successfully.")
+    return redirect("admin_poll_list")

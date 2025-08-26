@@ -66,6 +66,19 @@
                         </div>
                         <p class="mt-2 text-sm text-gray-500">Make your question clear and engaging</p>
                     </div>
+                    <div>
+                        <label for="end_time" class="block text-lg font-semibold text-gray-900 mb-3">
+                            End Time (Optional)
+                        </label>
+                        <input
+                            type="datetime-local"
+                            name="end_time"
+                            id="end_time"
+                            min="{{ now|date:'Y-m-d\\TH:i' }}"  
+                            class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                        />
+                        <p class="mt-2 text-sm text-gray-500">Leave empty if you don’t want the poll to auto-end.</p>
+                    </div>
 
                     <!-- Poll Options Section -->
                     <div>
