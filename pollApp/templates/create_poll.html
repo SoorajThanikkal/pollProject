@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Poll - Poll App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Navigation Header -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">PollApp</h1>
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="/adm/polls/" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Dashboard</a>
+                    <a href="/poll_list/" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">My Polls</a>
+                    <a href="/logout/" class="text-gray-600 hover:text-indigo-600 transition-colors duration-200">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <div class="mx-auto h-16 w-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                <svg class="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+            </div>
+            <h2 class="text-3xl font-extrabold text-gray-900">Create a New Poll</h2>
+            <p class="mt-2 text-gray-600">Design your poll and gather valuable insights from your audience</p>
+        </div>
+
+        <!-- Poll Creation Form -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+            <div class="p-8">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+
+                    <!-- Poll Question Section -->
+                    <div>
+                        <label for="question" class="block text-lg font-semibold text-gray-900 mb-3">
+                            Poll Question
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <input
+                                type="text"
+                                name="question"
+                                id="question"
+                                placeholder="What would you like to ask your audience?"
+                                required
+                                class="block w-full pl-10 pr-3 py-4 text-lg border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                            />
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">Make your question clear and engaging</p>
+                    </div>
+
+                    <!-- Poll Options Section -->
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <label class="block text-lg font-semibold text-gray-900">
+                                Poll Options
+                            </label>
+                            <span class="text-sm text-gray-500">Minimum 2 options required</span>
+                        </div>
+                        
+                        <div id="options-container" class="space-y-3">
+                            <div class="option-field flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-medium text-indigo-600">1</span>
+                                    </div>
+                                </div>
+                                <input
+                                    type="text"
+                                    name="options"
+                                    placeholder="Enter first option"
+                                    required
+                                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                                />
+                                <button
+                                    type="button"
+                                    onclick="removeOption(this)"
+                                    class="flex-shrink-0 w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                                    title="Remove option"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="option-field flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                        <span class="text-sm font-medium text-indigo-600">2</span>
+                                    </div>
+                                </div>
+                                <input
+                                    type="text"
+                                    name="options"
+                                    placeholder="Enter second option"
+                                    required
+                                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                                />
+                                <button
+                                    type="button"
+                                    onclick="removeOption(this)"
+                                    class="flex-shrink-0 w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                                    title="Remove option"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Add Option Button -->
+                        <div class="mt-4">
+                            <button
+                                type="button"
+                                onclick="addOption()"
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+                            >
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Add Another Option
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Poll Settings (Optional) -->
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-end pt-6 border-t border-gray-200">
+                        <button
+                            type="submit"
+                            class="px-6 py-3 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 shadow-sm flex items-center"
+                        >
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Create Poll
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-blue-900 mb-3">💡 Tips for Better Polls</h3>
+            <ul class="space-y-2 text-sm text-blue-800">
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3"></span>
+                    Keep your question clear and concise
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3"></span>
+                    Provide balanced and comprehensive options
+                </li>
+                <li class="flex items-start">
+                    <span class="flex-shrink-0 w-1.5 h-1.5 bg-blue-400 rounded-full mt-2 mr-3"></span>
+                    Avoid leading or biased language
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <p class="text-gray-500 text-sm">
+                    © 2024 Poll App. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function addOption() {
+            const container = document.getElementById("options-container");
+            const optionCount = container.getElementsByClassName("option-field").length + 1;
+
+            // Create wrapper div
+            const div = document.createElement("div");
+            div.classList.add("option-field", "flex", "items-center", "space-x-3");
+
+            // Create number indicator
+            const numberDiv = document.createElement("div");
+            numberDiv.className = "flex-shrink-0";
+            const numberCircle = document.createElement("div");
+            numberCircle.className = "w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center";
+            const numberSpan = document.createElement("span");
+            numberSpan.className = "text-sm font-medium text-indigo-600";
+            numberSpan.textContent = optionCount;
+            numberCircle.appendChild(numberSpan);
+            numberDiv.appendChild(numberCircle);
+
+            // Create input
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = "options";
+            input.placeholder = "Enter option " + optionCount;
+            input.required = true;
+            input.className = "flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200";
+
+            // Create remove button
+            const removeBtn = document.createElement("button");
+            removeBtn.type = "button";
+            removeBtn.className = "flex-shrink-0 w-10 h-10 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg transition-colors duration-200 flex items-center justify-center";
+            removeBtn.title = "Remove option";
+            removeBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            removeBtn.onclick = function () {
+                removeOption(removeBtn);
+            };
+
+            div.appendChild(numberDiv);
+            div.appendChild(input);
+            div.appendChild(removeBtn);
+            container.appendChild(div);
+
+            // Update option numbers
+            updateOptionNumbers();
+        }
+
+        function removeOption(button) {
+            const container = document.getElementById("options-container");
+            if (container.getElementsByClassName("option-field").length > 2) {
+                button.parentElement.remove();
+                updateOptionNumbers();
+            } else {
+                // Show a more styled alert
+                const alertDiv = document.createElement("div");
+                alertDiv.className = "fixed top-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50";
+                alertDiv.innerHTML = '<strong>Notice:</strong> A poll must have at least 2 options.';
+                document.body.appendChild(alertDiv);
+                setTimeout(() => alertDiv.remove(), 3000);
+            }
+        }
+
+        function updateOptionNumbers() {
+            const container = document.getElementById("options-container");
+            const options = container.getElementsByClassName("option-field");
+            for (let i = 0; i < options.length; i++) {
+                const numberSpan = options[i].querySelector("span");
+                if (numberSpan) {
+                    numberSpan.textContent = i + 1;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
